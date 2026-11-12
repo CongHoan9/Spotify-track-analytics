@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Music Insight — Khám phá gu âm nhạc</title><link rel="stylesheet" href="/style.css"></head>
+<body><aside><a class="brand" href="/">◉ Music Insight</a><p>KHÔNG GIAN ÂM NHẠC</p>
+<button data-view="discover">✦ Dành cho bạn</button><button data-view="search">⌕ Khám phá</button>
+<button data-view="playlists">♫ Playlist của bạn</button><button data-view="analytics">▥ Hoạt động</button>
+<div class="aside-bottom">Spotify Tracks · Spark · ML<br><span id="modelInfo">Đang kết nối…</span></div></aside>
+<main><header><span>Khám phá âm nhạc theo cách của bạn</span><button id="logout" hidden>Đăng xuất</button></header>
+<div id="message" role="status" aria-live="polite"></div>
+<section id="auth"><p class="eyebrow">BẮT ĐẦU HÀNH TRÌNH</p><h1>Âm nhạc hợp gu.<br>Khám phá mỗi ngày.</h1>
+<p>Chọn thể loại, lưu những bài bạn thích và tìm thêm những âm thanh gần với bạn.</p>
+<form id="authForm"><label>Tên đăng nhập<input id="username" autocomplete="username" minlength="3" required></label>
+<label>Mật khẩu<input id="password" type="password" autocomplete="current-password" minlength="8" required></label>
+<div class="row"><button class="primary" type="submit">Đăng nhập</button><button id="register" type="button">Tạo tài khoản</button></div></form></section>
+<section id="workspace" hidden><div class="hero"><p class="eyebrow">YOUR SOUND, YOUR SPACE</p><h1 id="title">Dành cho bạn</h1>
+<p id="subtitle">Bắt đầu từ một bài yêu thích. Khám phá những điều mới.</p></div>
+<div id="preferences"><h3>Thể loại bạn yêu thích</h3><div id="genreList" class="chips"></div><button id="savePreferences">Lưu sở thích</button></div>
+<form id="searchForm" hidden><input id="query" placeholder="Tìm bài hát hoặc nghệ sĩ" aria-label="Tìm kiếm"><button class="primary">Tìm kiếm</button></form>
+<div id="playlistControls" hidden><input id="playlistName" placeholder="Tên playlist" aria-label="Tên playlist"><button id="newPlaylist">Tạo playlist</button></div>
+<div id="content" class="grid"></div></section>
+<footer>Thông tin từ Spotify Tracks Dataset. Liên kết mở bài hát trên Spotify; ứng dụng không phát âm thanh.</footer></main>
+<script type="module" src="/app.js"></script></body></html>
