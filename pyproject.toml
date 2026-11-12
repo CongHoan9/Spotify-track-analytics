@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "music-insight"
+version = "0.1.0"
+description = "Personalized music discovery and Spark analytics"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1",
+  "sqlalchemy>=2.0,<3", "psycopg[binary]>=3.2,<4",
+  "pandas>=2.2,<3", "numpy>=1.26,<3", "scikit-learn>=1.5,<2",
+  "requests>=2.32,<3", "itsdangerous>=2.2,<3"
+]
+
+[project.optional-dependencies]
+train = ["torch>=2.4,<3"]
+stream = ["kafka-python>=2.0,<3"]
+spark = ["pyspark==3.5.3", "kafka-python>=2.0,<3"]
+dev = ["pytest>=8,<10", "httpx>=0.27,<1", "ruff>=0.9,<1", "nbformat>=5,<6"]
+
+[tool.setuptools.packages.find]
+include = ["music*", "backend*", "pipelines*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

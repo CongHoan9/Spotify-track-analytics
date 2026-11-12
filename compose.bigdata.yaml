@@ -1,0 +1,55 @@
+name: spotify-bigdata
+x-spark: &spark
+  image: spotify-bigdata:local
+  build:
+    context: .
+    dockerfile: docker/bigdata.Dockerfile
+  volumes:
+    - ./data:/workspace/data
+    - ./reports/bigdata:/workspace/reports/bigdata
+  environment:
+    SPARK_LOCAL_IP: 0.0.0.0
+    SPARK_DAEMON_MEMORY: 256m
+services:
+  master:
+    <<: *spark
+    hostname: master
+    command: ["spark-class", "org.apache.spark.deploy.master.Master", "--host", "master", "--port", "7077", "--webui-port", "8080"]
+    ports: ["127.0.0.1:8080:8080"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/json/',timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  worker-1:
+    <<: *spark
+    hostname: worker-1
+    command: ["spark-class", "org.apache.spark.deploy.worker.Worker", "--host", "worker-1", "--cores", "2", "--memory", "1g", "--webui-port", "8081", "spark://master:7077"]
+    depends_on:
+      master: {condition: service_healthy}
+  worker-2:
+    <<: *spark
+    hostname: worker-2
+    command: ["spark-class", "org.apache.spark.deploy.worker.Worker", "--host", "worker-2", "--cores", "2", "--memory", "1g", "--webui-port", "8081", "spark://master:7077"]
+    depends_on:
+      master: {condition: service_healthy}
+  analysis:
+    <<: *spark
+    hostname: analysis
+    profiles: ["jobs"]
+    command: ["spark-submit", "--master", "spark://master:7077", "--conf", "spark.driver.host=analysis", "--conf", "spark.driver.bindAddress=0.0.0.0", "--conf", "spark.cores.max=4", "--conf", "spark.executor.cores=2", "--executor-memory", "512m", "--driver-memory", "1g", "bigdata/analyze.py"]
+    depends_on: [worker-1, worker-2]
+  dashboard:
+    <<: *spark
+    command: ["python", "-m", "http.server", "8050", "--directory", "bigdata/dashboard"]
+    ports: ["127.0.0.1:8050:8050"]
+    volumes:
+      - ./reports/bigdata:/workspace/bigdata/dashboard/results:ro
+  history:
+    <<: *spark
+    command: ["sh", "-c", "mkdir -p /workspace/data/spark-events && spark-class org.apache.spark.deploy.history.HistoryServer"]
+    environment:
+      SPARK_DAEMON_MEMORY: 256m
+      SPARK_HISTORY_OPTS: -Dspark.history.fs.logDirectory=/workspace/data/spark-events
+    ports: ["127.0.0.1:18080:18080"]
+
